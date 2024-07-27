@@ -24,15 +24,15 @@ Dimensionality reduction using CUR decomposition ($A\approx CUR$)
 import numpy as np
 from sklearn.datasets import load_wine
 
-n_components = 5
+n_components = 10
 A = load_wine().data.T
 
-cur = CUR(A=A, n_components=n_components)
+cur = CURdecomposition(A=A, n_components=n_components)
 cur_error = np.linalg.norm(A - cur.C @ cur.Cpinv @ A)
 print(f"[CUR] reconstruction error: {cur_error:.4f}")
 ```
 
 ```
 # Output
-[CUR] reconstruction error: 6.7330
+[CUR] reconstruction error: 6.5836
 ```
