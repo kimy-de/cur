@@ -22,12 +22,13 @@ Dimensionality reduction using CUR decomposition ($A\approx CUR$)
 ### Example
 ```python
 import numpy as np
+import curd
 from sklearn.datasets import load_wine
 
 n_components = 10
 A = load_wine().data.T
 
-cur = CURdecomposition(A=A, n_components=n_components)
+cur = curd.CURdecomposition(A=A, n_components=n_components)
 cur_error = np.linalg.norm(A - cur.C @ cur.Cpinv @ A)
 print(f"[CUR] reconstruction error: {cur_error:.4f}")
 ```
