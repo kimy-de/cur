@@ -5,8 +5,8 @@ Dimensionality reduction using CUR decomposition ($A\approx CUR$)
 
 - **A** : *numpy.array, default=None*, n x m dataset matrix (n: number of features, m: number of instances)
 - **n_components** : *int, default=2*, Desired dimensionality of output data
-- **sampling** : *str, default='random'*, Sampling method for column and row selection
-- **n_iter** : *int, default=5*, Number of iterations for CUR approximations
+- **sampling** : *str, default='deim'*, Sampling method for column and row selection
+- **n_iter** : *int, default=10*, Number of iterations for CUR approximations
 
 
 ### Attributes
@@ -35,5 +35,5 @@ print(f"[CUR] reconstruction error: {cur_error:.4f}")
 
 ```
 # Output
-[CUR] reconstruction error: 6.5836
+[CUR] reconstruction error: 4.8897
 ```

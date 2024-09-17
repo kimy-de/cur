@@ -1,17 +1,18 @@
 import numpy as np
+from sklearn.utils.extmath import randomized_svd
 
 __all__ = ["CURdecomposition"]
 
 class CURdecomposition:
-    def __init__(self, A=None, n_components=2, sampling='random', n_iter=50):
+    def __init__(self, A=None, n_components=2, sampling='deim', n_iter=10):
         """Dimensionality reduction using CUR decomposition
 
         Parameters
         ----------
         A: numpy.array, default=None, n x m dataset matrix (n: number of features, m: number of instances)
         n_components : int, default=2, Desired dimensionality of output data
-        sampling : str, default='random', Sampling method for column and row selection
-        n_iter : int, default=5, Number of iterations for CUR approximations
+        sampling : str, default='deim', Sampling method for column and row selection
+        n_iter : int, default=10, Number of iterations for CUR approximations when sampling='random'
 
         Attributes
         ----------
@@ -36,6 +37,33 @@ class CURdecomposition:
 
         if sampling == 'random':
             self.C, self.U, self.R, self.Cpinv, self.Rpinv, self.colidx, self.rowidx = self.random_selection()
+
+        elif sampling == 'deim':
+            # Truncated SVD
+            U, sigma, VT = randomized_svd(self.A, n_components=n_components, random_state=77)
+            
+            self.colidx = self.deim(VT.T)
+            self.rowidx = self.deim(U)
+            self.C = self.A[:,self.colidx]
+            self.R = self.A[self.rowidx]
+            self.Cpinv = self.inverse(self.C)
+            self.Rpinv = self.inverse(self.R)
+            self.U = self.Cpinv @ self.A @ self.Rpinv
+
+
+    def deim(self, V):
+        #print(V.shape)
+        p = []
+        v = V[:,0]
+        p.append(np.argmax(abs(v)))
+
+        for i in range(1,V.shape[1]):
+            v = V[:,i:i+1]
+            c = self.inverse(V[p,:i]) @ v[p]
+            r = v - V[:,:i] @ c
+            p.append(np.argmax(abs(r)))
+
+        return p
 
     def random_selection(self):
         """Column and row selection using multinomial distributions based on data magnitudes.
